@@ -42,16 +42,61 @@ router.get('/:id', async (req, res) => {
   }
 });
 
-router.post('/', (req, res) => {
+router.post('/', async (req, res) => {
+  console.log(req.body);
   // create a new category
+  try {
+    const { category_name } = req.body;
+    const newCategory = await Category.create({
+      category_name,
+    });
+    res.json(newCategory);
+  } catch (error) {
+    console.error(error);
+  }
 });
 
-router.put('/:id', (req, res) => {
+router.put('/:id', async (req, res) => {
   // update a category by its `id` value
+  console.log(req.body);
+  try {
+    console.log(req.body);
+    const { category_name } = req.body;
+
+    const categoryId = req.params.id;
+    const category = await Category.findByPk(categoryId);
+
+    if (!category) {
+      console.log('No category found');
+      return;
+    }
+    await category.update({
+      category_name,
+    });
+
+    res.json(category);
+  } catch (error) {
+    console.error(error)
+  }
 });
 
-router.delete('/:id', (req, res) => {
+router.delete('/:id', async (req, res) => {
   // delete a category by its `id` value
+  try {
+    
+
+    const categoryId = req.params.id;
+    const category = await Category.findByPk(categoryId);
+
+    if (!category) {
+      console.log('No category found');
+      return;
+    }
+    await category.destroy();
+    res.json({message: 'Category has been deleted'})
+  }catch (error) {
+    console.error(error)
+  }
 });
 
 module.exports = router;
